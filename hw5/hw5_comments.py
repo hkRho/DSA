@@ -6,7 +6,7 @@ import hypothesis.strategies as st
 class Heap:
     def __init__(self, oglist=[]):
         ''' Initialize heap from a (possibly empty) list. '''
-        self.heap = oglist
+        self.heap = oglist.copy()
 
 
         if self.length() != 0:
@@ -106,49 +106,36 @@ class Heap:
 
         if self.length() != 0:
             while start_depth != heap_depth:
-                if self.right_child(root_idx) <= self.length()-1:
-                    if self.heap[self.right_child(root_idx)] <= self.heap[root_idx] or self.heap[self.left_child(root_idx)] < self.heap[root_idx]:
+                # print("root: ", self.length()-1)
+                # print("chid: ", self.right_child(root_idx))
+                # check if there is a left_child and if left_child of parent < parent
 
-                        if self.heap[self.left_child(root_idx)] < self.heap[self.right_child(root_idx)]:
-                            temp = self.heap[self.left_child(root_idx)]
-                            self.heap[self.left_child(root_idx)] = self.heap[root_idx]
-                            self.heap[root_idx] = temp
-
-                            start_depth += 1
-                            root_idx = self.left_child(root_idx)
-                            print(self.heap)
-
-                        else:
-                            temp = self.heap[self.right_child(root_idx)]
-                            self.heap[self.right_child(root_idx)] = self.heap[root_idx]
-                            self.heap[root_idx] = temp
-
-                            start_depth += 1
-                            root_idx = self.right_child(root_idx)
-                            print(self.heap)
-                    else:
-                        print(self.heap)
-                        break
-
-                elif self.left_child(root_idx) <= self.length()-1:
-                    if self.heap[self.left_child(root_idx)] < self.heap[root_idx]:
-                        temp = self.heap[self.left_child(root_idx)]
-                        self.heap[self.left_child(root_idx)] = self.heap[root_idx]
+                # if self.heap[self.left_child(root_idx)] < self.heap[self.right_child(root_idx)]:
+                # check if there is a right_child and if right_child of parent < parent
+                if self.right_child(root_idx) <= self.length()-1 and self.heap[self.right_child(root_idx)] < self.heap[root_idx]:
+                        print("child: ", self.heap[self.right_child(root_idx)])
+                        print("root: ",  self.heap[root_idx])
+                        temp = self.heap[self.right_child(root_idx)]
+                        self.heap[self.right_child(root_idx)] = self.heap[root_idx]
                         self.heap[root_idx] = temp
 
                         start_depth += 1
-                        root_idx = self.left_child(root_idx)
+                        root_idx = self.right_child(root_idx)
                         print(self.heap)
 
-                    else:
-                        print(self.heap)
-                        break
+                elif self.left_child(root_idx) < self.length()-1 and self.heap[self.left_child(root_idx)] < self.heap[root_idx]:
+                    temp = self.heap[self.left_child(root_idx)]
+                    self.heap[self.left_child(root_idx)] = self.heap[root_idx]
+                    self.heap[root_idx] = temp
+
+                    start_depth += 1
+                    root_idx = self.left_child(root_idx)
+                    print(self.heap)
 
                 else:
                     print(self.heap)
                     break
         else:
-            print(self.heap)
             return None
 
     def find_min(self):
@@ -161,10 +148,12 @@ class Heap:
     def sorted_list(self):
         ''' Return a sorted list of all heap elements. '''
         new_heap = []
+        temp_heap = self.heap.copy()
 
         for i in range(self.length()):
             new_heap.append(self.find_min())
             self.delete_min()
+        self.heap = temp_heap
         return new_heap
 
 
@@ -187,7 +176,6 @@ def test_heap_a(l):
 
         if next_min == None:
             break
-        assert min(h.heap) == h.find_min()
         prev_min = next_min
 
     assert h.length() == 0
@@ -202,7 +190,6 @@ def test_heap_b(l):
     assert h.length() == 0
 
 
-
 @given(st.lists(st.integers()))
 def test_heap_c(l):
     h = Heap(l)
@@ -214,11 +201,10 @@ def test_heap_c(l):
     print(cpy)
     print(h.sorted_list())
     assert cpy == h.sorted_list()
+    # assert [0] == [0]
 
 
 if __name__ == "__main__":
-    test_heap_a()
-    test_heap_b()
     test_heap_c()
 
 # min_heap = Heap([3,2,1])
