@@ -8,47 +8,47 @@ class Heap:
         ''' Initialize heap from a (possibly empty) list. '''
         self.heap = oglist
 
-
+        # check if the heap is empty
         if self.length() != 0:
             heap_depth = math.floor(math.log2(self.length())) + 1
 
+            # loop through n times given that n is the number of elements in the heap
             for i in range(len(self.heap)):
                 root_idx = 0
                 start_depth = 1
 
                 while start_depth != heap_depth:
-                    # check if there is a left_child and if left_child of parent < parent
-                    # print("root_idx: ", root_idx)
-                    if self.left_child(root_idx) <= self.length()-1 and self.heap[self.left_child(root_idx)] < self.heap[root_idx]:
-                        temp = self.heap[self.left_child(root_idx)]
-                        self.heap[self.left_child(root_idx)] = self.heap[root_idx]
-                        self.heap[root_idx] = temp
+                    # check if the right child is in the range of the heap (there is a right child)
+                    if self.right_child(root_idx) <= self.length()-1:
+                        if self.heap[self.right_child(root_idx)] <= self.heap[root_idx] or self.heap[self.left_child(root_idx)] < self.heap[root_idx]:
 
-                        start_depth += 1
-                        root_idx = self.left_child(root_idx)
-                        print(self.heap)
+                            if self.heap[self.left_child(root_idx)] < self.heap[self.right_child(root_idx)]:
+                                self.swap_left_child(root_idx)
+                                start_depth += 1
+                                root_idx = self.left_child(root_idx)
 
-                    # check if there is a right_child and if right_child of parent < parent
-                    elif self.right_child(root_idx) <= self.length()-1 and self.heap[self.right_child(root_idx)] < self.heap[root_idx]:
-                            temp = self.heap[self.right_child(root_idx)]
-                            self.heap[self.right_child(root_idx)] = self.heap[root_idx]
-                            self.heap[root_idx] = temp
-
-                            start_depth += 1
-                            root_idx = self.right_child(root_idx)
+                            else:
+                                self.swap_right_child(root_idx)
+                                start_depth += 1
+                                root_idx = self.right_child(root_idx)
+                        else:
                             print(self.heap)
+                            break
+
+                    # check if the left child is in the range of the heap (there only is a left child)
+                    elif self.left_child(root_idx) <= self.length()-1:
+                        if self.heap[self.left_child(root_idx)] < self.heap[root_idx]:
+                            self.swap_left_child(root_idx)
+                            start_depth += 1
+                            root_idx = self.left_child(root_idx)
+
+                        else:
+                            break
+                    # there are no children
                     else:
-                        print("-----")
                         break
         else:
             self.heap = []
-
-    # def swap(self, idx):
-    #     temp = self.heap[self.parent(idx)]
-    #     self.heap[self.parent(idx)] = self.heap[idx]
-    #     self.heap[idx] = temp
-    #
-    #     return
 
     def parent(self, idx):
         ''' Return the parent of the 'idx' node given. '''
@@ -61,6 +61,24 @@ class Heap:
     def right_child(self, idx):
         ''' Return the right child of the 'idx' node given. '''
         return (idx*2)+2
+
+    def swap_parent(self, idx):
+        ''' Change value of idx with the parent of idx '''
+        temp = self.heap[self.parent(idx)]
+        self.heap[self.parent(idx)] = self.heap[idx]
+        self.heap[idx] = temp
+
+    def swap_left_child(self, idx):
+        ''' Change value of the heap[idx] with the left child of the idx '''
+        temp = self.heap[self.left_child(idx)]
+        self.heap[self.left_child(idx)] = self.heap[idx]
+        self.heap[idx] = temp
+
+    def swap_right_child(self, idx):
+        ''' Change value of the heap[idx] with the right child of the idx '''
+        temp = self.heap[self.right_child(idx)]
+        self.heap[self.right_child(idx)] = self.heap[idx]
+        self.heap[idx] = temp
 
     def length(self):
         ''' Return length of the heap. '''
@@ -81,9 +99,7 @@ class Heap:
             while heap_depth != 1:
                 # swap inserted and parent value if inserted < parent
                 if self.heap[val_idx] < self.heap[self.parent(val_idx)]:
-                    temp = self.heap[self.parent(val_idx)]
-                    self.heap[self.parent(val_idx)] = self.heap[val_idx]
-                    self.heap[val_idx] = temp
+                    self.swap_parent(val_idx)
 
                     # update the heap_deapth and val_idx
                     heap_depth -= 1
@@ -104,51 +120,38 @@ class Heap:
         self.heap[root_idx] = self.heap[self.length()-1]
         del self.heap[self.length()-1]
 
+        # check if the heap is empty
         if self.length() != 0:
             while start_depth != heap_depth:
+                # check if the right child is in the range of the heap (there is a right child)
                 if self.right_child(root_idx) <= self.length()-1:
                     if self.heap[self.right_child(root_idx)] <= self.heap[root_idx] or self.heap[self.left_child(root_idx)] < self.heap[root_idx]:
 
                         if self.heap[self.left_child(root_idx)] < self.heap[self.right_child(root_idx)]:
-                            temp = self.heap[self.left_child(root_idx)]
-                            self.heap[self.left_child(root_idx)] = self.heap[root_idx]
-                            self.heap[root_idx] = temp
-
+                            self.swap_left_child(root_idx)
                             start_depth += 1
                             root_idx = self.left_child(root_idx)
-                            print(self.heap)
 
                         else:
-                            temp = self.heap[self.right_child(root_idx)]
-                            self.heap[self.right_child(root_idx)] = self.heap[root_idx]
-                            self.heap[root_idx] = temp
-
+                            self.swap_right_child(root_idx)
                             start_depth += 1
                             root_idx = self.right_child(root_idx)
-                            print(self.heap)
                     else:
                         print(self.heap)
                         break
 
+                # check if the left child is in the range of the heap (there only is a left child)
                 elif self.left_child(root_idx) <= self.length()-1:
                     if self.heap[self.left_child(root_idx)] < self.heap[root_idx]:
-                        temp = self.heap[self.left_child(root_idx)]
-                        self.heap[self.left_child(root_idx)] = self.heap[root_idx]
-                        self.heap[root_idx] = temp
-
+                        self.swap_left_child(root_idx)
                         start_depth += 1
                         root_idx = self.left_child(root_idx)
-                        print(self.heap)
 
                     else:
-                        print(self.heap)
                         break
-
                 else:
-                    print(self.heap)
                     break
         else:
-            print(self.heap)
             return None
 
     def find_min(self):
@@ -165,11 +168,13 @@ class Heap:
         for i in range(self.length()):
             new_heap.append(self.find_min())
             self.delete_min()
+
         return new_heap
 
 
 @given(st.lists(st.integers()))
 def test_heap_a(l):
+    ''' Test sequentially inserting -> sequentially deleting '''
     h = Heap()
     for i in range(len(l)):
         if len(l) == 0:
@@ -192,45 +197,33 @@ def test_heap_a(l):
 
     assert h.length() == 0
 
+
 @given(st.lists(st.integers()))
 def test_heap_b(l):
+    ''' Test initializing given l -> sequentially deleting '''
     h = Heap(l)
     for i in range(len(l)):
         if len(l) == 0:
             break
         h.delete_min()
+        # include the extra assert
     assert h.length() == 0
-
 
 
 @given(st.lists(st.integers()))
 def test_heap_c(l):
+    ''' Test initializing given l -> returning a sorted l '''
     h = Heap(l)
     cpy = l
     cpy.sort()
-    # if h.length() == 0:
-    #     h.heap.append(0)
-    #     cpy.append(0)
     print(cpy)
     print(h.sorted_list())
     assert cpy == h.sorted_list()
+    ## call h.sorted_list()
+    ## iterate and if the elements are in ascending order
 
 
 if __name__ == "__main__":
     test_heap_a()
     test_heap_b()
     test_heap_c()
-
-# min_heap = Heap([3,2,1])
-# min_heap.insert(5)
-# min_heap.insert(3)
-# min_heap.insert(6)
-# min_heap.insert(8)
-# min_heap.insert(1)
-# print(min_heap.heap)
-# print("------------")
-# min_heap.delete_min()
-# min_heap.sorted_list()
-# print(min_heap.sorted_list())
-# print(min_heap.length())
-# print(math.floor(math.log2(5)))
