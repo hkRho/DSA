@@ -27,10 +27,6 @@ def match_wildcard(str, wildcard, n1, n2):
     # initialize lookup table
     table = create_table(n1, n2)
 
-    # Case 1: str, wildcard is empty
-    # if n1 == 0 and n2 == 0:
-    #     table[n1][n2] = True
-
     # base case
     table[0][0] = True
 
@@ -64,49 +60,65 @@ def match_wildcard(str, wildcard, n1, n2):
     
 
 def test1():
-    # True
+    '''
+    Test to check DP Solution - True
+    '''
     s1 = ""
     s2 = "*"
     print(match_wildcard(s1, s2, len(s1), len(s2)))
 
 def test2():
-    # True
+    '''
+    Test to check DP Solution - True
+    '''
     s1 = "ab"
     s2 = "a*"
     print(match_wildcard(s1, s2, len(s1), len(s2)))
 
 def test3():
-    # True
+    '''
+    Test to check DP Solution - True
+    '''
     s1 = ""
     s2 = ""
     print(match_wildcard(s1, s2, len(s1), len(s2)))
 
 def test4():
-    # True
+    '''
+    Test to check DP Solution - True
+    '''
     s1 = "abcd"
     s2 = "a*d"
     print(match_wildcard(s1, s2, len(s1), len(s2)))
 
 def test5():
-    # False
+    '''
+    Test to check DP Solution - False
+    '''
     s1 = "abcd"
     s2 = "a*de"
     print(match_wildcard(s1, s2, len(s1), len(s2)))
 
 def test6():
-    # True
+    '''
+    Test to check DP Solution - True
+    '''
     s1 = "abcdefg"
     s2 = "a*de*"
     print(match_wildcard(s1, s2, len(s1), len(s2)))
 
 def test7():
-    # True
+    '''
+    Test to check DP Solution - True
+    '''
     s1 = "bcde"
     s2 = "*de"
     print(match_wildcard(s1, s2, len(s1), len(s2)))
 
 def test8():
-    # False
+    '''
+    Test to check DP Solution - False
+    '''
     s1 = "ac"
     s2 = "*a*b"
     print(match_wildcard(s1, s2, len(s1), len(s2)))
