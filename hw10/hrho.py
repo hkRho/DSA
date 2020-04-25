@@ -132,9 +132,7 @@ def local_search_heuristic(total_dist, route, C):
             # if the current_dist is smaller than the optimized_dist, update total distance
             if current_dist < optimized_dist:
                 optimized_dist = current_dist
-                optimized_route = current_route
-                # print("HEYHEY: ", optimized_dist)
-                # print("YOYOYO: ", optimized_route)
+                optimized_route = current_route.copy()
             
             # remove removed_city
             current_route.remove(current_route[idx])
@@ -223,6 +221,12 @@ def gr48():
 
 
 if __name__ == "__main__":
+    a = [1,2,3]
+    b = [4,5,6]
+    a = b.copy()
+    print(a)
+    b.remove(4)
+    print(a)
     C = read_tsp('gr24.tsp')
     # print(C)
 
