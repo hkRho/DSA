@@ -47,15 +47,13 @@ def traveling_salesman(C):
     cities = []
     for i in range(num_cols):
         cities.append(i+1)
-    # print("Cities: ", cities)
 
     # initialize hashmap of visited status
     visit_status = {}
     for i in range(len(cities)):
         visit_status[i+1] = False
-    # print("Visit Status: ", visit_status)
 
-    # initialize queue/stack? to keep track of route
+    # initialize list and total_dist to keep track of route and total distance
     route = []
     total_dist = 0
 
@@ -101,44 +99,49 @@ def local_search_heuristic(total_dist, route, C):
     route: a list that contains the order that the cities should be visited
     C: a distance matrix between all possible combinations of two cities
     '''
-    # set optimized distance and route
-    optimized_dist = 100000000000000000000.0
-    optimized_route = []
+    # initialize optimized distance and route
+    optimized_dist = total_dist
+    optimized_route = route
 
     # remove all the cities one by one
-    for i in range(len(route)-1):
-        # start current_dist from total_dist for each city
+    for i in range(len(route)):
+        # initialize current_dist and current_route for optimization
         current_dist = total_dist
         current_route = route
 
-        # print(i, len(route))
-        # remove a city from route & subtract the distances to that removed city
-        if i == (len(route)-1):
-            current_dist -= C[current_route[i-1]-1][current_route[i]-1] + C[current_route[0]-1][current_route[i]-1]
+        # subtract the distances to a soon-to-be removed city
+        if i == (len(route)-1): # case when deleting the last city from current_route
+            current_dist -= C[current_route[i-1]-1][current_route[i]-1] + C[current_route[0]-1][current_route[i]-1] # two edges get deleted when one city is removed
 
-        current_dist -= C[current_route[i-1]-1][current_route[i]-1] + C[current_route[i+1]-1][current_route[i]-1] # two edges get deleted when one city is removed
+        elif i != (len(route)-1):
+            current_dist -= C[current_route[i-1]-1][current_route[i]-1] + C[current_route[i+1]-1][current_route[i]-1] # two edges get deleted when one city is removed
+
+        # remove city
         removed_city = current_route[i]
         current_route.remove(current_route[i])
-        # print(current_dist, route)
 
         # reinsert in best spot - go through all possible locations and find the shortest route
-        for idx in range(len(route)):
+        for idx in range(len(current_route)):
             # insert removed_city at different idx
             current_route.insert(idx, removed_city)
 
-            # add edges back again between city before and after that removed city
+            # update distance - add distances back again between city before and after that removed city
             current_dist += C[current_route[idx]-1][current_route[idx+1]-1] + C[current_route[idx]-1][current_route[idx-1]-1]
             # print(current_dist, current_route)
 
-            # if the optimized distance is smaller than the total distance, update total distance
+            # if the current_dist is smaller than the optimized_dist, update total distance
             if current_dist < optimized_dist:
                 optimized_dist = current_dist
                 optimized_route = current_route
+                # print("HEYHEY: ", optimized_dist)
+                # print("YOYOYO: ", optimized_route)
             
+            # remove removed_city
             current_route.remove(current_route[idx])
-        
-        # add the removed_city back into the route
+
+        # add the removed_city back into the current_route
         current_route.insert(i, removed_city)
+
 
     # return the total distance required for the route and the route
     return optimized_dist, optimized_route
@@ -184,8 +187,8 @@ def gr17():
     total_d, tour = traveling_salesman(C_gr17)
     opt_total_dist, opt_route = local_search_heuristic(total_d, tour, C_gr17)
 
-    get_runtime_traveling_salesman(C_gr17)
-    get_runtime_local_search(C_gr17)
+    print("Greedy Runtime: ", get_runtime_traveling_salesman(C_gr17))
+    print("Local Search Runtime: ", get_runtime_local_search(C_gr17))
     print(get_optimality_gap(2085, opt_total_dist))
 
 
@@ -194,8 +197,8 @@ def gr21():
     total_d, tour = traveling_salesman(C_gr21)
     opt_total_dist, opt_route = local_search_heuristic(total_d, tour, C_gr21)
 
-    get_runtime_traveling_salesman(C_gr21)
-    get_runtime_local_search(C_gr21)
+    print("Greedy Runtime: ", get_runtime_traveling_salesman(C_gr21))
+    print("Local Search Runtime: ", get_runtime_local_search(C_gr21))
     print(get_optimality_gap(2707, opt_total_dist))
 
 
@@ -204,8 +207,8 @@ def gr24():
     total_d, tour = traveling_salesman(C_gr24)
     opt_total_dist, opt_route = local_search_heuristic(total_d, tour, C_gr24)
 
-    get_runtime_traveling_salesman(C_gr24)
-    get_runtime_local_search(C_gr24)
+    print("Greedy Runtime: ", get_runtime_traveling_salesman(C_gr24))
+    print("Local Search Runtime: ", get_runtime_local_search(C_gr24))
     print(get_optimality_gap(1272, opt_total_dist))
 
 
@@ -214,13 +217,14 @@ def gr48():
     total_d, tour = traveling_salesman(C_gr48)
     opt_total_dist, opt_route = local_search_heuristic(total_d, tour, C_gr48)
 
-    get_runtime_traveling_salesman(C_gr48)
-    get_runtime_local_search(C_gr48)
+    print("Greedy Runtime: ", get_runtime_traveling_salesman(C_gr48))
+    print("Local Search Runtime: ", get_runtime_local_search(C_gr48))
     print(get_optimality_gap(5046, opt_total_dist))
 
 
 if __name__ == "__main__":
     C = read_tsp('gr24.tsp')
+    # print(C)
 
     total_d, tour = traveling_salesman(C)
     # print(traveling_salesman(C))
@@ -236,6 +240,9 @@ if __name__ == "__main__":
 
     #######
     # gr17()
+    # print("\n")
     # gr21()
+    # print("\n")
     # gr24()
+    # print("\n")
     # gr48()
